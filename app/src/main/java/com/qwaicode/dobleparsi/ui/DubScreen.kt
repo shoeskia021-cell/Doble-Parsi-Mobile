@@ -502,9 +502,6 @@ private fun ApiKeyField(
         color = DP.TextMuted
     )
 }
-
-}
-
 /** Every text colour of the field is pinned; disabled state stays readable. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
