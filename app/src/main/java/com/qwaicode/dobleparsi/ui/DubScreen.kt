@@ -76,6 +76,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -458,12 +459,14 @@ private fun Chip(label: String, value: String) {
     }
 }
 
-@Composable
+@@Composable
 private fun ApiKeyField(
     settings: Settings,
     running: Boolean,
     onSettingsChange: ((Settings) -> Settings) -> Unit
 ) {
+    val clipboard = LocalClipboardManager.current
+
     OutlinedTextField(
         value = settings.apiKey,
         onValueChange = { value -> onSettingsChange { it.copy(apiKey = value.trim()) } },
@@ -478,6 +481,19 @@ private fun ApiKeyField(
         modifier = Modifier.fillMaxWidth()
     )
     Spacer(Modifier.height(10.dp))
+    OutlinedButton(
+        onClick = {
+            clipboard.getText()?.text?.let { text ->
+                onSettingsChange { it.copy(apiKey = text.trim()) }
+            }
+        },
+        enabled = !running,
+        shape = RoundedCornerShape(14.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text("Paste API Key", color = DP.Text)
+    }
+    Spacer(Modifier.height(10.dp))
     ApiTest(settings.apiKey)
     Spacer(Modifier.height(8.dp))
     Text(
@@ -485,6 +501,8 @@ private fun ApiKeyField(
         style = MaterialTheme.typography.bodySmall,
         color = DP.TextMuted
     )
+}
+
 }
 
 /** Every text colour of the field is pinned; disabled state stays readable. */
